@@ -28,8 +28,8 @@ from skimage.draw import ellipse_perimeter
 import scipy.ndimage as ndimage  
 import time
 
-NASA = np.load('NASA_337_erosion.npy')#'NASA_45_erosion.npy')#
-RF = np.load('crop337_RF.npy')#cropped_melts2_RF.npy')#
+NASA = np.load('NASA_337_erosion.npy')
+RF = np.load('crop337_RF.npy')
 
 #Opening up the edited mask
 mask_raw = Image.open('crop337_mask.png')
@@ -45,63 +45,14 @@ truth_mask_75 = (truth_mask >= 102)
 truth_mask_other = np.logical_and(truth_mask_80,truth_mask_75)
 
 new_truth_mask = np.full(truth_mask.shape, -1)
-new_truth_mask[truth_mask_other] = 1 #119
-new_truth_mask[truth_mask_interior] = 2 #255
+new_truth_mask[truth_mask_other] = 1 
+new_truth_mask[truth_mask_interior] = 2 
 new_truth_mask[truth_mask_boundary] = 0
-# np.count_nonzero(a < 4) How to visualize to check
 
-'''
-mask_raw = Image.open('Test_mask.tif')
-mask = mask_raw.convert('L')
-truth_mask = np.asarray(mask)
-
-#Creating the second training mask
-truth_mask_interior = (truth_mask > 120)
-truth_mask_boundary = (truth_mask < 102)
-truth_mask_80 = (truth_mask <= 120)
-truth_mask_75 = (truth_mask >= 102)
-truth_mask_other = np.logical_and(truth_mask_80,truth_mask_75)
-
-new_truth_mask = np.full(truth_mask.shape, -1)
-new_truth_mask[truth_mask_other] = 1 #119
-new_truth_mask[truth_mask_interior] = 2 #255
-new_truth_mask[truth_mask_boundary] = 0
-'''
-#Test1 = np.load('Test4.npy')#np.zeros((6,6))
-
-#NASA = NASA[:2160,:2160]
-
-'''
-Test1[0][1] = 1
-Test1[0][2] = 1
-Test1[0][4] = 1
-Test1[1][0] = 1
-Test1[1][1] = 1
-Test1[1][3] = 1
-Test1[2][1] = 1
-Test1[2][2] = 1
-Test1[2][3] = 1
-Test1[3][0] = 1
-Test1[3][1] = 1
-Test1[3][2] = 1
-Test1[4][4] = 1
-Test1[4][3] = 1
-Test1[5][5] = 1
-Test1[5][4] = 1
-Test1[5][2] = 1
-
-np.save('Test4.npy',Test1)
-
-plt.imshow(Test1,cmap = plt.cm.gray)
-plt.show()
-
-
-man_seg = Test1
-'''
 
 man_seg = new_truth_mask
 print (man_seg.shape)
-'''
+
 st = time.time()
 #mult_k = 1
 Ps = []
@@ -128,12 +79,6 @@ for k in range (0,int(len(NASA)/mult_k)):
     if coords != []:
        maxs.append(max(coords))
     vals, edges = np.histogram(coords,50,range = [0,450])
-    
-    #coords = np.array(coords)
-    #print (len(man_seg[i+(k*mult_k)]))
-    #print (coords)
-    #print (vals)
-    #print (edges)
 
 
     middles = [] 
@@ -151,9 +96,7 @@ for k in range (0,int(len(NASA)/mult_k)):
     else:
         P = num/den   
     Ps.append(P)
-    
-    #Ps.append(vals)
-    #print (middles)
+
     
 Ps = np.array(Ps)
 end = time.time()
@@ -188,14 +131,9 @@ plt.show()
 
 
 #Vertical Distribution
-'''
 #man_seg  = Test1
 man_seg = man_seg.T
 mult_k = 1
-#plt.imshow(man_seg,cmap=plt.cm.gray)
-#plt.colorbar()
-#plt.axis('off')
-#plt.savefig('Look.eps', bbox_inches='tight', pad_inches=0)
 st = time.time()
 #mult_k = 1
 Ps = []
@@ -223,12 +161,6 @@ for k in range (0,int(len(NASA)/mult_k)):
        maxs.append(max(coords))
     vals, edges = np.histogram(coords,25,range = [0,240])
     
-    #coords = np.array(coords)
-    #print (len(man_seg[i+(k*mult_k)]))
-    #print (coords)
-    #print (vals)
-    #print (edges)
-    
     middles = []
     num = []
     for i in range(0,len(edges)-1):
@@ -238,13 +170,12 @@ for k in range (0,int(len(NASA)/mult_k)):
     
     
     den = sum(num)
-    #print (vals)
+
     if den == 0:
         P = num 
     else:
         P = num/den  
     Ps.append(P)
-    #print (k)
     
 
 Ps = np.array(Ps)
